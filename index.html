@@ -2,121 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AICE Chat</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; }
-    #chat { margin-top: 20px; }
-    input, button { padding: 8px; margin: 5px; border-radius: 6px; border: none; }
-    #messages { border: 1px solid #444; background: #222; padding: 10px; width: 80%; margin: 0 auto; height: 200px; overflow-y: auto; }
-    .msg { text-align: left; margin: 4px 0; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Share Room</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>📝 AICE Room</h1>
-  <div>
-    <button onclick="createRoom()">Create Room</button>
-    <input id="roomCode" placeholder="Enter Room Code">
-    <button onclick="joinRoom()">Join Room</button>
+  <h1>📝 Text Share Room</h1>
+
+  <div class="room-controls">
+    <button id="createRoomBtn">Create Room</button>
+    <input id="roomCodeInput" placeholder="Enter Room Code (Gist ID)">
+    <button id="joinRoomBtn">Join Room</button>
   </div>
 
-  <div id="chat" style="display:none;">
+  <div id="chatContainer" class="hidden">
     <h3>Room: <span id="roomDisplay"></span></h3>
     <div id="messages"></div>
     <input id="msgInput" placeholder="Type message...">
-    <button onclick="sendMessage()">Send</button>
+    <button id="sendMsgBtn">Send</button>
   </div>
 
-<script>
-const GITHUB_TOKEN = "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";
-const GIST_API_URL = "https://api.github.com/gists";
-let currentRoom = null;
-let messages = [];
-
-async function createRoom() {
-  const body = {
-    description: "AICE Room",
-    public: false,
-    files: { "room.json": { content: JSON.stringify({ messages: [] }) } }
-  };
-
-  const res = await fetch(GIST_API_URL, {
-    method: "POST",
-    headers: {
-      "Authorization": `token ${GITHUB_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-
-  const data = await res.json();
-  if (res.ok) {
-    alert("Room created! Share this code: " + data.id);
-    joinRoomWithId(data.id);
-  } else {
-    alert("Error creating room");
-    console.error(data);
-  }
-}
-
-async function joinRoom() {
-  const roomCode = document.getElementById("roomCode").value.trim();
-  if (roomCode) {
-    joinRoomWithId(roomCode);
-  }
-}
-
-async function joinRoomWithId(roomCode) {
-  const res = await fetch(`${GIST_API_URL}/${roomCode}`, {
-    headers: { "Authorization": `token ${GITHUB_TOKEN}` }
-  });
-
-  const data = await res.json();
-  if (res.ok && data.files["room.json"]) {
-    currentRoom = roomCode;
-    messages = JSON.parse(data.files["room.json"].content).messages || [];
-    document.getElementById("roomDisplay").innerText = currentRoom;
-    document.getElementById("chat").style.display = "block";
-    renderMessages();
-  } else {
-    alert("Room not found!");
-  }
-}
-
-function renderMessages() {
-  const box = document.getElementById("messages");
-  box.innerHTML = "";
-  messages.forEach(m => {
-    const div = document.createElement("div");
-    div.className = "msg";
-    div.textContent = m;
-    box.appendChild(div);
-  });
-  box.scrollTop = box.scrollHeight;
-}
-
-async function sendMessage() {
-  const msg = document.getElementById("msgInput").value.trim();
-  if (!msg || !currentRoom) return;
-  messages.push(msg);
-  renderMessages();
-
-  const body = {
-    files: {
-      "room.json": { content: JSON.stringify({ messages }, null, 2) }
-    }
-  };
-
-  await fetch(`${GIST_API_URL}/${currentRoom}`, {
-    method: "PATCH",
-    headers: {
-      "Authorization": `token ${GITHUB_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-
-  document.getElementById("msgInput").value = "";
-}
-</script>
+  <script src="app.js"></script>
 </body>
 </html>
