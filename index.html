@@ -3,25 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text Share Room</title>
+  <title>TextShare - Realtime Chat</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>📝 Text Share Room</h1>
+  <div class="container">
+    <header>
+      <h1>TextShare</h1>
+      <p>Share text instantly with anyone using room codes. No sign-up required!</p>
+    </header>
 
-  <div class="room-controls">
-    <button id="createRoomBtn">Create Room</button>
-    <input id="roomCodeInput" placeholder="Enter Room Code (Gist ID)">
-    <button id="joinRoomBtn">Join Room</button>
+    <div class="room-controls">
+      <input type="text" id="roomCodeInput" placeholder="Enter Room Code">
+      <button id="createRoomBtn">Create Room</button>
+      <button id="joinRoomBtn">Join Room</button>
+    </div>
+
+    <div class="room-info" id="roomInfo" style="display:none;">
+      <p>You're in room: <span id="currentRoomCode"></span></p>
+      <button id="leaveRoomBtn">Leave Room</button>
+    </div>
+
+    <div class="chat-container" id="chatContainer" style="display:none;">
+      <div id="messagesContainer" class="messages"></div>
+      <div class="message-form">
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button id="sendMessageBtn">Send</button>
+      </div>
+    </div>
   </div>
 
-  <div id="chatContainer" class="hidden">
-    <h3>Room: <span id="roomDisplay"></span></h3>
-    <div id="messages"></div>
-    <input id="msgInput" placeholder="Type message...">
-    <button id="sendMsgBtn">Send</button>
-  </div>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  <script src="app.js"></script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBGH20OvJRc1zO1Hc_FrS0QKSxztivvfHc",
+      authDomain: "text-sharing-a5df5.firebaseapp.com",
+      databaseURL: "https://text-sharing-a5df5-default-rtdb.firebaseio.com",
+      projectId: "text-sharing-a5df5",
+      storageBucket: "text-sharing-a5df5.appspot.com",
+      messagingSenderId: "835031407416",
+      appId: "1:835031407416:web:2bbdc6aeaed91d9247bfcd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.db = db;
+    window.ref = ref;
+    window.set = set;
+    window.push = push;
+    window.onValue = onValue;
+  </script>
+
+  <script src="app.js" type="module"></script>
 </body>
 </html>
