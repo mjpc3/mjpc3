@@ -1,5 +1,5 @@
 // ⚠️ Use your own token here
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "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";
 const GIST_API = "https://api.github.com/gists";
 
 let currentRoom = null;
